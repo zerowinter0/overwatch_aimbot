@@ -1,0 +1,13 @@
+train: ./data/train/images
+val: ./data/val/images
+test: ./data/test/images
+
+# 类别数
+nc: 5
+
+# 类别名称
+names: ['enemy','head','friend','friend_shadow','enemy_shadow']
+
+cache: True
+patience: 15
+batch: 5

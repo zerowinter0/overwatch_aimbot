@@ -1,0 +1,5 @@
+D:/aimbot/data/datasets/data/greater_image/2024-06-23_5-Fold_Cross-val/split_1/split_1_dataset.yaml
+D:/aimbot/data/datasets/data/greater_image/2024-06-23_5-Fold_Cross-val/split_2/split_2_dataset.yaml
+D:/aimbot/data/datasets/data/greater_image/2024-06-23_5-Fold_Cross-val/split_3/split_3_dataset.yaml
+D:/aimbot/data/datasets/data/greater_image/2024-06-23_5-Fold_Cross-val/split_4/split_4_dataset.yaml
+D:/aimbot/data/datasets/data/greater_image/2024-06-23_5-Fold_Cross-val/split_5/split_5_dataset.yaml

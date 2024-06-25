@@ -1,0 +1,5 @@
+enemy
+head
+friend
+friend_shadow
+enemy_shadow
