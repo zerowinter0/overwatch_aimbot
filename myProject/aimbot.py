@@ -16,55 +16,49 @@ from pynput.mouse import Controller
 import os
 import pydirectinput
 import keyboard
-target_x=1280
-target_y=720
 
-# target_x=320
-# target_y=320
 
 def aimbot_key():
     return 1
     #return win32api.GetAsyncKeyState(0x01) & 0x8000 != 0
-#model=YOLO(r"D:\aimbot\train4\weights\best.pt")
-model=YOLO("D:/aimbot/myProject/final_8n_best.pt")
-sct=mss.mss()
-monitor = sct.monitors[2]
-COLORS = np.random.uniform(0, 255, size=(1500, 3))
-def launch():
+
+def launch(auto_shoot):
+    target_x=1280/2
+    target_y=720/2
     aimbot_key=True
+    model=YOLO("D:/aimbot/myProject/final_8n_best.pt")
+    sct=mss.mss()
+    monitor = sct.monitors[2]
+    COLORS = np.random.uniform(0, 255, size=(1500, 3))
     cnt=0
     while True:
         if aimbot_key:
             screenshot = sct.grab(monitor)
             img = np.array(screenshot)
             img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
-            #img=cv2.resize(img,(640,640))
             img=cv2.resize(img,(int(2560/2),int(1440/2)))
-            #results = model.predict(img)
-            results = model.predict(img,verbose=False)
 
-            # image = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
-            # b, g, r = cv2.split(image)
-            # output_image = np.zeros_like(image)
-            # # 条件掩码：r > 100 and g < 60 and b < 60
-            # mask = (r > 100) & (g < 80) & (b < 80)
-            # # 应用掩码到输出图像
-            # output_image[mask] = image[mask]
+            image = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
+            b, g, r = cv2.split(image)
+            output_image = np.zeros_like(image)
+            # 条件掩码：r > 100 and g < 60 and b < 60
+            mask = (r > 100) & (g < 80) & (b < 80)
+            # 应用掩码到输出图像
+            output_image[mask] = image[mask]
 
-            # results = model.predict(output_image,verbose=False)
-
+            results = model.predict(output_image,verbose=False)
             result=results[0]
             x=-10000
             y=-10000
             cls=0
             conf=0
             for box in result.boxes:
-                    if(box.cls!=1):
+                    if(box.cls!=0):
                         continue
                     x1, y1, x2, y2 = map(int, box.xyxy[0])
                     new_cls=box.cls
                     new_conf = box.conf.cpu().numpy()
-                    if(new_conf<0.5):
+                    if(new_conf<0.65):
                         continue
                     else:
                         print(new_conf)
@@ -83,10 +77,10 @@ def launch():
             if(x==-10000):
                  cnt+=1
                  img=result.plot()
-                 cv2.imshow('Live Feed', img)
+                 cv2.imshow('检测结果', img)
                  if (cv2.waitKey(1) & 0xFF) == ord('q'):
                     exit()
-                 if(cnt==10):
+                 if(cnt==10 and auto_shoot):
                     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)#抬起
                  continue
             else:
@@ -96,11 +90,14 @@ def launch():
                 final_y=y-target_y
                 final_x=int(final_x*0.6)
                 final_y=int(final_y*0.6)
+                print(final_x,final_y)
                 win32api.mouse_event(win32con.MOUSEEVENTF_MOVE,final_x,final_y)
-                win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)#按下
+
+                if(auto_shoot):
+                    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,x,y,0,0)#按下
                 img=result.plot()
-                cv2.imshow('Live Feed', img)
+                cv2.imshow('检测结果', img)
                 if (cv2.waitKey(1) & 0xFF) == ord('q'):
                     exit()
-                #time.sleep(3)
-launch()
+if __name__=='__main__':
+    launch(0)
